@@ -59,3 +59,34 @@ it('logs out and returns 204', function () {
         ->postJson('/api/logout')
         ->assertNoContent();
 });
+
+it('resets password when email exists', function () {
+    User::factory()->create([
+        'email'    => 'ana@test.com',
+        'password' => Hash::make('oldpassword'),
+    ]);
+
+    $this->postJson('/api/forgot-password', [
+        'email'    => 'ana@test.com',
+        'password' => 'newpassword123',
+    ])->assertOk()->assertJson(['message' => 'Senha redefinida com sucesso.']);
+
+    $user = User::where('email', 'ana@test.com')->first();
+    expect(Hash::check('newpassword123', $user->password))->toBeTrue();
+});
+
+it('returns 422 when email does not exist on forgot-password', function () {
+    $this->postJson('/api/forgot-password', [
+        'email'    => 'naoexiste@test.com',
+        'password' => 'qualquersenha',
+    ])->assertUnprocessable()
+      ->assertJsonFragment(['message' => 'E-mail não encontrado.']);
+});
+
+it('returns 422 for invalid data on forgot-password', function () {
+    $this->postJson('/api/forgot-password', [
+        'email'    => 'nao-e-um-email',
+        'password' => '123',
+    ])->assertUnprocessable()
+      ->assertJsonValidationErrors(['email', 'password']);
+});
