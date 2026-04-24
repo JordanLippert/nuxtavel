@@ -24,6 +24,17 @@ class UserService
         ]);
     }
 
+    public function resetPassword(string $email, string $password): void
+    {
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            throw new \InvalidArgumentException('E-mail não encontrado.');
+        }
+
+        $user->update(['password' => Hash::make($password)]);
+    }
+
     public function listUsers(array $filters = []): LengthAwarePaginator
     {
         return User::query()
