@@ -22,7 +22,7 @@ frontend/.env
 *.pen
 
 # Raiz (comitar manualmente quando pronto)
-logo.svg
-README.md
-render.yaml
-docker-compose.yml
+/logo.svg
+/README.md
+/render.yaml
+/docker-compose.yml
