@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTOs\LoginDTO;
 use App\DTOs\RegisterDTO;
+use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
@@ -54,5 +55,19 @@ class AuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         return response()->json(new UserResource($request->user()));
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        try {
+            $this->service->resetPassword(
+                $request->validated('email'),
+                $request->validated('password'),
+            );
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Senha redefinida com sucesso.']);
     }
 }
