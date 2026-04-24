@@ -1,0 +1,28 @@
+# Backend
+backend/vendor/
+backend/.env
+backend/storage/logs/
+backend/storage/framework/cache/
+backend/storage/framework/sessions/
+backend/storage/framework/views/
+
+# Frontend
+frontend/node_modules/
+frontend/.nuxt/
+frontend/.output/
+frontend/.env
+
+# IDE
+.idea/
+
+# Claude Code
+.claude/
+
+# Design
+*.pen
+
+# Raiz (comitar manualmente quando pronto)
+logo.svg
+README.md
+render.yaml
+docker-compose.yml
