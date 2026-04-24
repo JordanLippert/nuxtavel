@@ -19,7 +19,7 @@ frontend/.env
 .claude/
 
 # Design
-*.pen
+.pen
 
 # Raiz (comitar manualmente quando pronto)
 /logo.svg
