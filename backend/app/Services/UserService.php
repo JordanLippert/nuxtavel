@@ -24,11 +24,6 @@ class UserService
         ]);
     }
 
-    public function getUserById(int $id): User
-    {
-        return User::findOrFail($id);
-    }
-
     public function listUsers(array $filters = []): LengthAwarePaginator
     {
         return User::query()
