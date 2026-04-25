@@ -15,9 +15,11 @@ class UpdateUserRequest extends FormRequest
 
         return [
             'name'       => ['required', 'string', 'max:255'],
-            'email'      => ['required', 'email', "unique:users,email,{$userId}"],
+            'email'      => ['required', 'email:filter', 'regex:/\.[a-zA-Z]{2,}$/', "unique:users,email,{$userId}"],
             'password'   => ['nullable', Password::min(8)],
             'birth_date' => ['required', 'date_format:d/m/Y'],
+            'role'       => ['nullable', 'string', 'in:Admin,Editor,Viewer'],
+            'status'     => ['nullable', 'string', 'in:Ativo,Inativo'],
             'avatar'     => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }

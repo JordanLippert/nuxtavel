@@ -13,7 +13,7 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name'       => ['required', 'string', 'max:255'],
-            'email'      => ['required', 'email', 'unique:users,email'],
+            'email'      => ['required', 'email:filter', 'regex:/\.[a-zA-Z]{2,}$/', 'unique:users,email'],
             'password'   => ['required', Password::min(8)],
             'birth_date' => ['required', 'date_format:d/m/Y'],
             'avatar'     => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
