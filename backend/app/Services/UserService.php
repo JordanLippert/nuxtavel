@@ -8,6 +8,7 @@ use App\DTOs\UpdateUserDTO;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -45,8 +46,26 @@ class UserService
                         ->orWhere('email', 'like', "%{$filters['search']}%");
                 })
             )
+            ->when(!empty($filters['role']),   fn ($q) => $q->where('role',   $filters['role']))
+            ->when(!empty($filters['status']), fn ($q) => $q->where('status', $filters['status']))
             ->orderByDesc('created_at')
             ->paginate(10);
+    }
+
+    public function exportUsers(array $filters = []): Collection
+    {
+        return User::query()
+            ->when(
+                !empty($filters['search']),
+                fn ($q) => $q->where(function ($sub) use ($filters) {
+                    $sub->where('name', 'like', "%{$filters['search']}%")
+                        ->orWhere('email', 'like', "%{$filters['search']}%");
+                })
+            )
+            ->when(!empty($filters['role']),   fn ($q) => $q->where('role',   $filters['role']))
+            ->when(!empty($filters['status']), fn ($q) => $q->where('status', $filters['status']))
+            ->orderByDesc('created_at')
+            ->get();
     }
 
     public function createUser(CreateUserDTO $dto): User
@@ -69,6 +88,9 @@ class UserService
             'email'      => $dto->email,
             'birth_date' => Carbon::createFromFormat('d/m/Y', $dto->birthDate)->toDateString(),
         ];
+
+        if ($dto->role)   $data['role']   = $dto->role;
+        if ($dto->status) $data['status'] = $dto->status;
 
         if ($dto->password) {
             $data['password'] = Hash::make($dto->password);
