@@ -15,7 +15,9 @@ class UserResource extends JsonResource
             'name'       => $this->name,
             'email'      => $this->email,
             'birth_date' => $this->birth_date?->format('d/m/Y'),
-            'avatar_url' => $this->avatar ? Storage::url($this->avatar) : null,
+            'role'       => $this->role,
+            'status'     => $this->status,
+            'avatar_url' => $this->avatar ? Storage::disk('public')->url($this->avatar) : null,
             'created_at' => $this->created_at?->toISOString(),
         ];
     }
