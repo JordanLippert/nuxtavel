@@ -256,7 +256,7 @@ async function handleExport() {
                 <NxAvatar :name="user.name" :avatar-url="user.avatar_url" />
                 <div>
                   <div style="font-weight:500;">{{ user.name }}</div>
-                  <div style="font-size:11px;color:var(--nx-text-3);">Criado {{ user.created_at ? new Date(user.created_at).toLocaleDateString('pt-BR') : '' }}</div>
+                  <div style="font-size:11px;color:var(--nx-text-3);">Criado {{ new Date(user.created_at).toLocaleDateString('pt-BR') }}</div>
                 </div>
               </div>
             </td>
