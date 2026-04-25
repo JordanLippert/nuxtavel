@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTOs\LoginDTO;
 use App\DTOs\RegisterDTO;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -55,6 +56,19 @@ class AuthController extends Controller
     public function me(Request $request): JsonResponse
     {
         return response()->json(new UserResource($request->user()));
+    }
+
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if (!Hash::check($request->validated('current_password'), $user->password)) {
+            return response()->json(['errors' => ['current_password' => ['Senha atual incorreta.']]], 422);
+        }
+
+        $user->update(['password' => Hash::make($request->validated('password'))]);
+
+        return response()->json(['message' => 'Senha alterada com sucesso.']);
     }
 
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
