@@ -9,8 +9,10 @@ Route::post('/register',        [AuthController::class, 'register']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout',  [AuthController::class, 'logout']);
-    Route::get('/users/me', [AuthController::class, 'me']);
+    Route::post('/logout',          [AuthController::class, 'logout']);
+    Route::get('/users/me',         [AuthController::class, 'me']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::get('/users/export', [UserController::class, 'export']);
     Route::apiResource('users', UserController::class);
     // Rota extra para update com multipart/form-data (PUT não suporta file upload)
     Route::post('/users/{user}/update', [UserController::class, 'update']);
