@@ -17,6 +17,7 @@ const loading = ref(false)
 const error   = ref('')
 
 async function handleRegister() {
+  if (loading.value) return
   error.value = ''
   loading.value = true
   try {
@@ -86,7 +87,7 @@ async function handleRegister() {
           </div>
           <div>
             <label class="nx-label">Senha <span style="color:var(--nx-danger)">*</span></label>
-            <input v-model="form.password" type="password" class="nx-input" placeholder="Mínimo 8 caracteres" required />
+            <input v-model="form.password" type="password" class="nx-input" placeholder="Mínimo 8 caracteres, letras e números" required />
           </div>
           <button type="submit" class="nx-btn nx-btn-primary" style="height:40px;font-size:14px;" :disabled="loading">
             {{ loading ? 'Criando conta…' : 'Criar conta' }}

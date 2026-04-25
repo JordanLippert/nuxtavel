@@ -212,7 +212,7 @@ async function savePassword() {
               <div>
                 <label class="nx-label">Nova senha <span class="nx-required">*</span></label>
                 <input v-model="security.password" type="password" class="nx-input" placeholder="••••••••" autocomplete="new-password" />
-                <div class="nx-hint">Mínimo de 8 caracteres.</div>
+                <div class="nx-hint">Mínimo de 8 caracteres, com letras e números.</div>
               </div>
               <div>
                 <label class="nx-label">Confirmar nova senha <span class="nx-required">*</span></label>

@@ -11,6 +11,7 @@ const loading = ref(false)
 const showPassword = ref(false)
 
 async function handleSubmit() {
+  if (loading.value) return
   loading.value = true
   try {
     await api.post('/forgot-password', { email: form.email, password: form.password })

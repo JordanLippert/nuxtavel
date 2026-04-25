@@ -3,14 +3,14 @@ definePageMeta({ middleware: 'guest', layout: false })
 
 const auth   = useAuthStore()
 const router = useRouter()
-const toast  = useToast()
 
-const form = reactive({ email: '', password: '', remember: false })
+const form = reactive({ email: '', password: '' })
 const showPassword = ref(false)
 const loading = ref(false)
 const error   = ref('')
 
 async function handleLogin() {
+  if (loading.value) return
   error.value = ''
   loading.value = true
   try {
@@ -67,7 +67,10 @@ async function handleLogin() {
         <p class="login-split__subtitle">Use seu e-mail corporativo.</p>
 
         <div v-if="error" class="login-error-banner">
-          <strong>Credenciais inválidas</strong><br/>{{ error }}
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          {{ error }}
         </div>
 
         <form style="display:flex;flex-direction:column;gap:16px;" @submit.prevent="handleLogin">
@@ -121,10 +124,7 @@ async function handleLogin() {
               </button>
             </div>
           </div>
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--nx-text-2);cursor:pointer;">
-            <input v-model="form.remember" type="checkbox" :style="{ accentColor: 'var(--nx-primary)' }" />
-            Manter-me conectado
-          </label>
+
           <button type="submit" class="nx-btn nx-btn-primary" style="height:40px;font-size:14px;" :disabled="loading">
             {{ loading ? 'Entrando…' : 'Entrar' }}
           </button>

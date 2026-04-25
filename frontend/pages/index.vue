@@ -22,7 +22,7 @@ function checkBirthday() {
 }
 
 const activeCount = computed(() =>
-  users.list.filter((u) => u.created_at).length
+  users.list.filter((u) => u.status === 'Ativo').length
 )
 </script>
 
