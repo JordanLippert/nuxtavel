@@ -13,7 +13,7 @@ class ForgotPasswordRequest extends FormRequest
     {
         return [
             'email'    => ['required', 'email:filter', 'regex:/\.[a-zA-Z]{2,}$/'],
-            'password' => ['required', Password::min(8)],
+            'password' => ['required', Password::min(8)->letters()->numbers()], // -> mixedCase() exige maiúscula + minúscula, mais seguro porém mais restritivo
         ];
     }
 }

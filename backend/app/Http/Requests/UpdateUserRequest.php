@@ -16,7 +16,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name'       => ['required', 'string', 'max:255'],
             'email'      => ['required', 'email:filter', 'regex:/\.[a-zA-Z]{2,}$/', "unique:users,email,{$userId}"],
-            'password'   => ['nullable', Password::min(8)],
+            'password'   => ['nullable', Password::min(8)->letters()->numbers()], // -> mixedCase() exige maiúscula + minúscula, mais seguro porém mais restritivo
             'birth_date' => ['required', 'date_format:d/m/Y'],
             'role'       => ['nullable', 'string', 'in:Admin,Editor,Viewer'],
             'status'     => ['nullable', 'string', 'in:Ativo,Inativo'],

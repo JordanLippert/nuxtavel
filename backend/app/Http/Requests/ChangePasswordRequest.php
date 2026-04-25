@@ -13,7 +13,7 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password' => ['required', 'string'],
-            'password'         => ['required', 'confirmed', Password::min(8)],
+            'password'         => ['required', 'confirmed', Password::min(8)->letters()->numbers()], // -> mixedCase() exige maiúscula + minúscula, mais seguro porém mais restritivo
         ];
     }
 }
