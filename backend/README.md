@@ -1,58 +1,122 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Nuxtavel — Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Status do Build"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total de Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Versão Estável Mais Recente"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="Licença"></a>
-</p>
+API REST do painel de gerenciamento de usuários, construída com **Laravel 13** e autenticação via **Laravel Sanctum**.
 
-## Sobre o Laravel
+---
 
-Laravel é um framework para aplicações web com sintaxe expressiva e elegante. Acreditamos que o desenvolvimento deve ser uma experiência prazerosa e criativa para ser verdadeiramente gratificante. O Laravel tira o peso do desenvolvimento ao facilitar tarefas comuns em projetos web, como:
+## Tecnologias
 
-- [Motor de rotas simples e rápido](https://laravel.com/docs/routing).
-- [Poderoso container de injeção de dependência](https://laravel.com/docs/container).
-- Múltiplos backends para armazenamento de [sessão](https://laravel.com/docs/session) e [cache](https://laravel.com/docs/cache).
-- ORM de banco de dados [expressivo e intuitivo](https://laravel.com/docs/eloquent).
-- [Migrations de schema](https://laravel.com/docs/migrations) agnósticas ao banco de dados.
-- [Processamento robusto de jobs em background](https://laravel.com/docs/queues).
-- [Broadcasting de eventos em tempo real](https://laravel.com/docs/broadcasting).
+| Camada | Tecnologia |
+|---|---|
+| Framework | Laravel 13 |
+| Linguagem | PHP 8.2+ |
+| Banco de dados | PostgreSQL |
+| Autenticação | Laravel Sanctum (token-based) |
+| Testes | Pest PHP |
+| Armazenamento | Laravel Storage (disco `public`) |
 
-O Laravel é acessível, poderoso e fornece as ferramentas necessárias para aplicações grandes e robustas.
+---
 
-## Aprendendo Laravel
+## Estrutura
 
-O Laravel possui a mais extensa e completa [documentação](https://laravel.com/docs) e biblioteca de tutoriais em vídeo de todos os frameworks web modernos, tornando muito fácil começar a usar o framework.
-
-Além disso, o [Laracasts](https://laracasts.com) contém milhares de tutoriais em vídeo sobre uma ampla variedade de tópicos, incluindo Laravel, PHP moderno, testes unitários e JavaScript. Aprimore suas habilidades explorando nossa abrangente videoteca.
-
-Você também pode assistir a lições curtas com projetos do mundo real no [Laravel Learn](https://laravel.com/learn), onde será guiado na construção de uma aplicação Laravel do zero enquanto aprende os fundamentos do PHP.
-
-## Desenvolvimento Agêntico
-
-A estrutura previsível e as convenções do Laravel o tornam ideal para agentes de IA como Claude Code, Cursor e GitHub Copilot. Instale o [Laravel Boost](https://laravel.com/docs/ai) para turbinar seu fluxo de trabalho com IA:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+app/
+├── DTOs/                  # Objetos de transferência de dados (imutáveis, readonly)
+│   ├── CreateUserDTO.php
+│   ├── UpdateUserDTO.php
+│   ├── LoginDTO.php
+│   └── RegisterDTO.php
+│
+├── Http/
+│   ├── Controllers/       # Recebem a requisição, delegam para Services
+│   │   ├── AuthController.php
+│   │   └── UserController.php
+│   │
+│   ├── Requests/          # Validação e autorização de entrada
+│   │   ├── LoginRequest.php
+│   │   ├── RegisterRequest.php
+│   │   ├── StoreUserRequest.php
+│   │   ├── UpdateUserRequest.php
+│   │   ├── ForgotPasswordRequest.php
+│   │   └── ChangePasswordRequest.php
+│   │
+│   └── Resources/         # Serialização da saída (UserResource)
+│       └── UserResource.php
+│
+├── Models/
+│   └── User.php
+│
+└── Services/              # Regras de negócio isoladas dos Controllers
+    └── UserService.php
 ```
 
-O Boost fornece ao seu agente mais de 15 ferramentas e habilidades que ajudam a construir aplicações Laravel seguindo as melhores práticas.
+---
 
-## Contribuindo
+## Rotas
 
-Obrigado por considerar contribuir com o framework Laravel! O guia de contribuição está disponível na [documentação do Laravel](https://laravel.com/docs/contributions).
+### Públicas
 
-## Código de Conduta
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `POST` | `/api/login` | Autenticação, retorna token Sanctum |
+| `POST` | `/api/register` | Cadastro de novo usuário |
+| `POST` | `/api/forgot-password` | Redefinição de senha por e-mail |
 
-Para garantir que a comunidade Laravel seja acolhedora para todos, por favor revise e respeite o [Código de Conduta](https://laravel.com/docs/contributions#code-of-conduct).
+### Autenticadas (`Bearer token`)
 
-## Vulnerabilidades de Segurança
+| Método | Endpoint | Descrição |
+|---|---|---|
+| `POST` | `/api/logout` | Invalida o token atual |
+| `GET` | `/api/users/me` | Retorna o usuário logado |
+| `POST` | `/api/change-password` | Altera a senha do usuário logado |
+| `GET` | `/api/users` | Lista usuários (busca, filtro, paginação) |
+| `POST` | `/api/users` | Cria novo usuário |
+| `GET` | `/api/users/{id}` | Exibe um usuário |
+| `POST` | `/api/users/{id}/update` | Atualiza usuário (suporta upload de avatar) |
+| `DELETE` | `/api/users/{id}` | Remove usuário |
+| `GET` | `/api/users/export` | Exporta lista de usuários em CSV |
 
-Se você descobrir uma vulnerabilidade de segurança no Laravel, envie um e-mail para Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). Todas as vulnerabilidades de segurança serão prontamente tratadas.
+> `PUT`/`PATCH` não suportam `multipart/form-data` em alguns clientes, por isso o update usa `POST /users/{id}/update`.
 
-## Licença
+---
 
-O framework Laravel é um software de código aberto licenciado sob a [licença MIT](https://opensource.org/licenses/MIT).
+## Executando localmente
+
+```bash
+# Instalar dependências
+composer install
+
+# Configurar variáveis de ambiente
+cp .env.example .env
+php artisan key:generate
+
+# Configurar banco e rodar migrations
+php artisan migrate
+
+# Criar link simbólico para avatars
+php artisan storage:link
+
+# Iniciar servidor de desenvolvimento
+php artisan serve
+```
+
+---
+
+## Testes
+
+```bash
+php artisan test
+# ou
+./vendor/bin/pest
+```
+
+Os testes cobrem os fluxos de autenticação (`AuthTest`) com os cenários de login, registro e redefinição de senha.
+
+---
+
+## Decisões de arquitetura
+
+- **DTOs imutáveis** (`readonly`) — garantem que os dados validados não sejam mutados entre Controller e Service.
+- **Form Requests** — toda validação fica fora dos Controllers, que ficam responsáveis apenas por orquestrar.
+- **Services** — regras de negócio (hash de senha, upload de avatar, filtros de listagem) isoladas e testáveis.
+- **UserResource** — padroniza a saída da API, expondo apenas os campos necessários e convertendo `avatar` em URL absoluta.
