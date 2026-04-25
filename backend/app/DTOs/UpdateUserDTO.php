@@ -13,6 +13,8 @@ final class UpdateUserDTO
         public readonly string $birthDate,
         public readonly ?string $password = null,
         public readonly ?UploadedFile $avatar = null,
+        public readonly ?string $role = null,
+        public readonly ?string $status = null,
     ) {}
 
     public static function fromRequest(UpdateUserRequest $request): self
@@ -23,6 +25,8 @@ final class UpdateUserDTO
             birthDate: $request->validated('birth_date'),
             password: $request->validated('password'),
             avatar: $request->file('avatar'),
+            role: $request->validated('role'),
+            status: $request->validated('status'),
         );
     }
 }
