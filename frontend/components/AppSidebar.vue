@@ -2,8 +2,9 @@
 const route  = useRoute()
 const auth   = useAuthStore()
 const router = useRouter()
-
-const users = useUsersStore()
+const users  = useUsersStore()
+const { open, closeMenu } = useMobileMenu()
+const { isLandscape }     = useOrientation()
 
 const navItems = [
   { id: 'index',    label: 'Painel',   path: '/',        icon: 'dashboard' },
@@ -16,6 +17,10 @@ const activeId = computed(() => {
   if (route.path === '/')              return 'index'
   return 'settings'
 })
+
+// Fecha o drawer ao navegar ou ao girar para paisagem (sidebar fica visível)
+watch(() => route.path, closeMenu)
+watch(isLandscape, (landscape) => { if (landscape) closeMenu() })
 
 async function handleLogout() {
   await auth.logout()
@@ -33,12 +38,23 @@ const initials = computed(() =>
 </script>
 
 <template>
-  <aside class="nx-sidebar nx">
+  <!-- Backdrop mobile -->
+  <Transition name="fade">
+    <div v-if="open" class="nx-sidebar-backdrop" @click="closeMenu" />
+  </Transition>
+
+  <aside class="nx-sidebar nx" :class="{ 'nx-sidebar--open': open }">
     <div class="nx-sidebar__logo">
       <span class="nx-lockup">
         <NxLogo :size="22" />
         <span class="nx-lockup__name">nuxtavel</span>
       </span>
+      <!-- Botão fechar (só mobile) -->
+      <button class="nx-sidebar__close nx-btn nx-btn-ghost nx-btn-icon" @click="closeMenu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
     </div>
 
     <nav class="nx-sidebar__nav">
@@ -49,15 +65,12 @@ const initials = computed(() =>
         :to="item.path"
         :class="['nx-sidebar__item', activeId === item.id && 'nx-sidebar__item--active']"
       >
-        <!-- Dashboard icon -->
         <svg v-if="item.icon === 'dashboard'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="nx-sidebar__item-ic">
           <rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>
         </svg>
-        <!-- Users icon -->
         <svg v-else-if="item.icon === 'users'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="nx-sidebar__item-ic">
           <circle cx="9" cy="8" r="3.5"/><path d="M2 19c1-3 3.5-5 7-5s6 2 7 5"/><path d="M16 4a3.5 3.5 0 0 1 0 7M22 19c-.6-2.4-2.2-4-4.5-4.7"/>
         </svg>
-        <!-- Settings icon -->
         <svg v-else-if="item.icon === 'settings'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="nx-sidebar__item-ic">
           <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 0 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 0 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8 1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>
         </svg>
@@ -87,7 +100,10 @@ const initials = computed(() =>
   background: var(--nx-surface); display: flex; flex-direction: column;
   flex-shrink: 0; height: 100vh; position: sticky; top: 0;
 }
-.nx-sidebar__logo { padding: 20px 20px 16px; }
+.nx-sidebar__logo {
+  padding: 20px 20px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
 .nx-lockup { display: inline-flex; align-items: center; gap: 8px; }
 .nx-lockup__name {
   font-family: var(--nx-font-sans); font-weight: 300;
@@ -119,7 +135,33 @@ const initials = computed(() =>
 }
 .nx-sidebar__user-role { font-size: 11px; color: var(--nx-text-3); }
 
+/* Mobile */
+.nx-sidebar__close { display: none; }
+
 @media (max-width: 1023px) {
-  .nx-sidebar { display: none; }
+  .nx-sidebar {
+    display: flex;
+    position: fixed; left: 0; top: 0; z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: var(--nx-shadow-lg);
+  }
+  .nx-sidebar--open { transform: translateX(0); }
+  .nx-sidebar__close { display: flex; }
 }
+
+.nx-sidebar-backdrop {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .nx-sidebar-backdrop {
+    display: block;
+    position: fixed; inset: 0; z-index: 199;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+  }
+}
+
+.fade-enter-active, .fade-leave-active { transition: opacity 0.25s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
