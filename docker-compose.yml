@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: nuxtavel_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nuxtavel
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - nuxtavel_pgdata:/var/lib/postgresql/data
+
+volumes:
+  nuxtavel_pgdata:
