@@ -21,8 +21,6 @@ frontend/.env
 # Design
 .pen
 
-# Raiz (comitar manualmente quando pronto)
+# Raiz
 /logo.svg
-/README.md
 /render.yaml
-/docker-compose.yml
