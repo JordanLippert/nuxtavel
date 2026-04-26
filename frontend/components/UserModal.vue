@@ -9,6 +9,14 @@ const loading = ref(false)
 const form = reactive({
   name: '', email: '', birth_date: '', role: 'Editor', status: 'Ativo', password: '', avatar: null as File | null,
 })
+
+function maskDate(e: Event) {
+  const input = e.target as HTMLInputElement
+  let v = input.value.replace(/\D/g, '').slice(0, 8)
+  if (v.length >= 5) v = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4)
+  else if (v.length >= 3) v = v.slice(0, 2) + '/' + v.slice(2)
+  form.birth_date = v
+}
 const avatarPreview = ref<string | null>(null)
 
 function onAvatarChange(e: Event) {
@@ -90,7 +98,7 @@ async function handleSubmit() {
                   <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--nx-text-3);pointer-events:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                   </svg>
-                  <input v-model="form.birth_date" class="nx-input" style="padding-left:36px;font-variant-numeric:tabular-nums;" placeholder="dd/mm/aaaa" required />
+                  <input :value="form.birth_date" class="nx-input" style="padding-left:36px;font-variant-numeric:tabular-nums;" placeholder="dd/mm/aaaa" maxlength="10" required @input="maskDate" />
                 </div>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -126,6 +134,10 @@ async function handleSubmit() {
                 <div class="nx-hint">O usuário receberá um convite por e-mail para redefinir.</div>
               </div>
             </div>
+          </div>
+
+          <div style="padding: 0 24px 12px;">
+            <p style="font-size:12px;color:var(--nx-text-3);margin:0;"><span style="color:var(--nx-danger)">*</span> Campos obrigatórios</p>
           </div>
 
           <div class="modal-footer">
