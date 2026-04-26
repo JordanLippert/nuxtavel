@@ -199,6 +199,10 @@ php artisan test
 
 > **Nota:** o free tier hiberna após 15 min de inatividade, adicionando ~50s na primeira requisição.
 
+### Limitações conhecidas
+
+- **Avatares efêmeros:** o filesystem do Render é descartado a cada redeploy ou reinicialização do container. Avatares enviados são perdidos.
+
 ---
 
 ## Licença
